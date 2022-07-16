@@ -1,0 +1,4 @@
+# Ignore historical data and reports
+DataAndReports/
+logs/
+__pycache__/

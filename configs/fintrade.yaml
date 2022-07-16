@@ -1,0 +1,98 @@
+common:
+  eq_segemnt: "EQUITIES"
+  derivaties_segemnt:  "DERIVATIVES"
+  indices_segemnt: "indices"
+  base_dir: ""
+  holiday_file: "<base_dir>/configs/holiday.json"
+  data_and_reports: "DataAndReports"
+  historical_data: "HistoricalData"
+  reports_dir: "Reports"
+  nifty_companies_dir: "<base_dir>/<data_and_reports>/<historical_data>/nifty_companies"
+  graphs_dir: "<base_dir>/<data_and_reports>/Graphs"
+
+job_list:
+  - equity
+  - fno
+  - indices
+  - emas
+  - bell_curve
+  - correlation_pairs
+  - weekly_performance
+  - monthly_performance
+  - pnl
+
+jobs:
+  equity:
+    tasks:
+      - download_bhavcopy
+      - nifty_50
+      - nifty_next_50
+      - nifty_mid_150
+      - nifty_small_250
+    params:
+      trading_day: 50
+      historical_data: "<base_dir>/<data_and_reports>/<historical_data>/equity"
+      reports: "<base_dir>/<data_and_reports>/<reports_dir>/equity"
+      with_ema: False
+      ema:
+        - 9
+        - 21
+  fno:
+    tasks:
+      - futures
+      - options
+      - open_interest
+    params:
+      trading_day: 50
+      futures: ''
+      historical_data: "<base_dir>/<data_and_reports>/<historical_data>/fno"
+      reports: "<base_dir>/<data_and_reports>/<reports_dir>/fno"
+      open_interest_report: True
+      with_ema: False
+      ema:
+        - 9
+        - 21
+
+
+  indices:
+    tasks:
+      - indices
+    params:
+      trading_day: 50
+      historical_data: "<base_dir>/<data_and_reports>/<historical_data>/indices"
+      reports: "<base_dir>/<data_and_reports>/<reports_dir>/indices"
+      with_ema: False
+      ema:
+        - 9
+        - 21 
+  emas:
+    tasks:
+    params:
+      historical_data: "<base_dir>/<data_and_reports>/<historical_data>/equity"
+      reports: "<base_dir>/<data_and_reports>/<reports_dir>/equity"
+  bell_curve:
+    tasks:
+    params:
+      historical_data: "<base_dir>/<data_and_reports>/<historical_data>/equity"
+      reports: "<base_dir>/<data_and_reports>/<reports_dir>/equity"
+  correlation_pairs:
+    tasks:
+    params:
+      historical_data: "<base_dir>/<data_and_reports>/<historical_data>/equity"
+      reports: "<base_dir>/<data_and_reports>/<reports_dir>/equity"
+  
+  weekly_performance:
+    tasks:
+    params:
+      historical_data: "<base_dir>/<data_and_reports>/<historical_data>/equity"
+      reports: "<base_dir>/<data_and_reports>/<reports_dir>/equity"
+  monthly_performance:
+    tasks:
+    params:
+      historical_data: "<base_dir>/<data_and_reports>/<historical_data>/equity"
+      reports: "<base_dir>/<data_and_reports>/<reports_dir>/equity"
+  pnl:
+    tasks:
+    params:
+      historical_data: "<base_dir>/<data_and_reports>/<historical_data>/pnl"
+      reports: "<base_dir>/<data_and_reports>/<reports_dir>/pnl"
