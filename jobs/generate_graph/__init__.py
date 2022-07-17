@@ -12,10 +12,13 @@ class GenerateDailyGraph:
         self.emas = emas
 
 
-    def generate_graph(self, stock, title):  
+    def generate_graph(self, stock, title, show_volume=False):  
         title = f"{title}.png"
-        volplot = mpf.make_addplot(stock['Volume'].rolling(window=20).mean(), width=0.8, panel=1,color='b')
-        self.plot_daily_chart(stock, title,volplot)
+        if show_volume:
+            volplot = mpf.make_addplot(stock['Volume'].rolling(window=20).mean(), width=0.8, panel=1,color='b')
+            self.plot_daily_chart(stock, title,volplot)
+        else:
+            self.plot_daily_chart_without_vol(stock, title)
         #self.invest(stock, title)
         # for session, ema in self.emas.items():
         #    self.plot_ema_chart(stock, title, volplot, ema[0], ema[1])
@@ -69,3 +72,8 @@ class GenerateDailyGraph:
     def plot_daily_chart(self,stock, title,volplot):
         graph_file = os.path.join(self.chart_save_dir,title)
         mpf.plot(stock,type='candle',style='yahoo',title=title, figscale=1.5,addplot=volplot, volume=True, figratio=(16,9), savefig=graph_file)
+        
+    def plot_daily_chart_without_vol(self,stock, title):
+        graph_file = os.path.join(self.chart_save_dir,title)
+        mpf.plot(stock,type='candle',style='yahoo',title=title, figscale=1.5,figratio=(16,9), savefig=graph_file)
+        

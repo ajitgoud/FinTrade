@@ -62,6 +62,7 @@ class ProcessData:
 
     def process_data(self, **kwargs):
         params = kwargs.get('params')
+        common = kwargs.get('common')
         symbols = kwargs.get('symbols')
         report_name = kwargs.get('report_name')
         bhavcopy_dir = kwargs.get('bhavcopy_dir')
@@ -71,6 +72,7 @@ class ProcessData:
         dates = get_n_trading_days(params.trading_day)
         historical_ndays_df = self.get_historical_ndays_df(dates, bhavcopy_dir)
         plot_ready_historical_data = self.make_data_plot_ready(symbols, historical_ndays_df)
+        reports_dir = os.path.join(reports_dir, common.business_date)
         self.make_required_dirs(reports_dir, graphs_dir)
         self.generate_graph(plot_ready_historical_data,graphs_dir)
         self.generate_pdf(report_name, reports_dir, graphs_dir)

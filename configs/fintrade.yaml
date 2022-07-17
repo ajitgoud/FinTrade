@@ -1,12 +1,19 @@
 common:
-  eq_segemnt: "EQUITIES"
-  derivaties_segemnt:  "DERIVATIVES"
-  indices_segemnt: "indices"
+  dd: ""
+  mm: ""
+  mm_str: ""
+  yyyy: ""
   base_dir: ""
+  business_date: "<dd><mm><yyyy>"
+  business_date_month: "<dd><mm_str><yyyy>"
+  eq_segment: "EQUITIES"
+  derivaties_segment:  "DERIVATIVES"
+  indices_segment: "indices"
   holiday_file: "<base_dir>/configs/holiday.json"
   data_and_reports: "DataAndReports"
   historical_data: "HistoricalData"
   reports_dir: "Reports"
+  nse_base_url: "https://archives.nseindia.com/content"
   nifty_companies_dir: "<base_dir>/<data_and_reports>/<historical_data>/nifty_companies"
   graphs_dir: "<base_dir>/<data_and_reports>/Graphs"
 
@@ -31,6 +38,7 @@ jobs:
       - nifty_small_250
     params:
       trading_day: 50
+      nse_endpoint: "<nse_base_url>/historical/<eq_segment>/<yyyy>/<mm_str>/cm<business_date_month>bhav.csv.zip"
       historical_data: "<base_dir>/<data_and_reports>/<historical_data>/equity"
       reports: "<base_dir>/<data_and_reports>/<reports_dir>/equity"
       with_ema: False
@@ -45,6 +53,7 @@ jobs:
     params:
       trading_day: 50
       futures: ''
+      nse_endpoint: "<nse_base_url>/historical/<derivaties_segment>/<yyyy>/<mm_str>/fo<business_date_month>bhav.csv.zip"
       historical_data: "<base_dir>/<data_and_reports>/<historical_data>/fno"
       reports: "<base_dir>/<data_and_reports>/<reports_dir>/fno"
       open_interest_report: True
@@ -56,9 +65,11 @@ jobs:
 
   indices:
     tasks:
-      - indices
+      - download_bhavcopy
+      - nifty_index
     params:
       trading_day: 50
+      nse_endpoint: "<nse_base_url>/<indices_segment>/ind_close_all_<business_date>.csv"
       historical_data: "<base_dir>/<data_and_reports>/<historical_data>/indices"
       reports: "<base_dir>/<data_and_reports>/<reports_dir>/indices"
       with_ema: False

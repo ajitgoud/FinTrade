@@ -22,7 +22,9 @@ class Equity:
         df = df.loc[(df['Series'] == 'EQ')]
         report_name = f"{task}_report-{self.today}.pdf"
         ProcessData().process_data(
-            params=params,symbols=df["Symbol"].tolist(), 
+            params=params,
+            common=common,
+            symbols=df["Symbol"].tolist(), 
             report_name=report_name, 
             bhavcopy_dir = params.historical_data,
             reports_dir = params.reports,

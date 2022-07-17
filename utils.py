@@ -106,7 +106,7 @@ def stdev(data):
     return round(std_dev,2)
 
 def replace(res, common):
-    if '/' in res:
+    if '/' in res and not 'url' in res:
         res = res.split('/')
         res = os.path.join(*res)
     pattern = re.compile(r'(<([\w]+)>)')
@@ -151,6 +151,7 @@ def update_config(config):
                 elif isinstance(v, list):
                     pass
                 else:
+                    print(v)
                     res = re.search(pattern, v)
                     if res:
                         config[key][k] = replace(v, config['common'])
@@ -164,6 +165,11 @@ def update_config(config):
 def load_yaml(yaml_file, **kwargs):
     with open(yaml_file, 'r') as file:
         config = yaml.safe_load(file)
+        today = get_working_day()
+        config['common']['dd'] = today.strftime("%d")
+        config['common']['mm'] = today.strftime("%m")
+        config['common']['mm_str'] = today.strftime("%b").upper()
+        config['common']['yyyy'] = str(today.year)
         if kwargs.get('base_dir'):
             config['common']['base_dir'] = kwargs.get('base_dir')
         config = update_config(config)
@@ -176,3 +182,4 @@ def convert_to_namedtuple(dictionary):
         if isinstance(value, dict):
             dictionary[key] = convert_to_namedtuple(value)
     return namedtuple('configuration', dictionary.keys())(**dictionary)
+
