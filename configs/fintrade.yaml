@@ -78,7 +78,14 @@ jobs:
         - 21 
   emas:
     tasks:
+      - download_bhavcopy
+      - ema_9_21
+      - ema_25_50
+      - ema_50_100
+      - ema_100_200
+      - ema_21_50_100_200
     params:
+      nse_endpoint: "<nse_base_url>/historical/<eq_segment>/<yyyy>/<mm_str>/cm<business_date_month>bhav.csv.zip"
       historical_data: "<base_dir>/<data_and_reports>/<historical_data>/equity"
       reports: "<base_dir>/<data_and_reports>/<reports_dir>/equity"
   bell_curve:
@@ -104,6 +111,7 @@ jobs:
       reports: "<base_dir>/<data_and_reports>/<reports_dir>/equity"
   pnl:
     tasks:
+      - calculate_pnl
     params:
       historical_data: "<base_dir>/<data_and_reports>/<historical_data>/pnl"
       reports: "<base_dir>/<data_and_reports>/<reports_dir>/pnl"

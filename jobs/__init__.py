@@ -1,5 +1,7 @@
 from jobs.equity import Equity
 from jobs.indices import Indices
+from jobs.pnl import Pnl
+from jobs.emas import Emas
 class Compute:
     def __init__(self, **kwargs):
         pass
@@ -8,6 +10,9 @@ class Compute:
         job_list = config.job_list
         common = config.common
         for job in job_list:
+            if 'ema' in job:
+                eval(job.capitalize())().start(params=eval(f'config.jobs.{job}'), common=common)
             if 'ind' in job:
                 eval(job.capitalize())().start(params=eval(f'config.jobs.{job}'), common=common)
-            
+            elif 'eq' in job:
+                eval(job.capitalize())().start(params=eval(f'config.jobs.{job}'), common=common)

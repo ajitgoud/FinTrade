@@ -182,4 +182,3 @@ def convert_to_namedtuple(dictionary):
         if isinstance(value, dict):
             dictionary[key] = convert_to_namedtuple(value)
     return namedtuple('configuration', dictionary.keys())(**dictionary)
-

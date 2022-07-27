@@ -1,17 +1,18 @@
+from email.message import EmailMessage
 import os
 import pandas as pd
-from jobs.equity.process_data import ProcessData
+from jobs.emas.process_data import ProcessData
 from jobs.download_historical_data import DownloadData
 from utils import *
+import re
 
 
-class Equity:
+class Emas:
     def __init__(self, **kwargs):
-        self.today = get_working_day().strftime("%Y%m%d")
-        self.bhavcopy_dir = ''
+        pass
 
     def download_bhavcopy(self, params, common):
-        bhavcopy = os.path.join(params.historical_data, f'{self.today}.csv')
+        bhavcopy = os.path.join(params.historical_data, f'{common.business_date}.csv')
         if not check_if_file_exists(bhavcopy):
             download_bhavcopy = DownloadData(
                 params=params, 
@@ -22,10 +23,13 @@ class Equity:
             download_bhavcopy.start_downloading()
 
     def initialize_task(self, task, params,common):
-        input_file =  os.path.join(common.nifty_companies_dir, f"{task}.csv")
+        input_file =  os.path.join(common.nifty_companies_dir, "nifty_500.csv")
         df = pd.read_csv(input_file)
         df = df.loc[(df['Series'] == 'EQ')]
-        report_name = f"{task}_report-{self.today}.pdf"
+        report_name = f"{task}_report-{common.business_date}.pdf"
+        pattern = re.compile(r"[\d]+")
+        emas = re.findall(pattern,task)
+        emas = list(map(int, emas))
         ProcessData(
             params=params,
             common=common,
@@ -33,7 +37,8 @@ class Equity:
             report_name=report_name, 
             bhavcopy_dir = params.historical_data,
             reports_dir = params.reports,
-            graphs_dir = common.graphs_dir
+            graphs_dir = common.graphs_dir,
+            emas = emas
         ).process_data()
 
     def start(self, **kwargs):
@@ -48,5 +53,5 @@ class Equity:
                 print(f'{task} task completed')
 
 if __name__ == "__main__":
-    eq = Equity()
+    eq = Emas()
     eq.download_bhavcopy()
