@@ -19,14 +19,14 @@ common:
 
 job_list:
   - equity
-  - fno
+  #- fno
   - indices
   - emas
-  - bell_curve
-  - correlation_pairs
-  - weekly_performance
-  - monthly_performance
-  - pnl
+  #- bell_curve
+  #- correlation_pairs
+  #- weekly_performance
+  #- monthly_performance
+  #- pnl
 
 jobs:
   equity:
@@ -37,14 +37,15 @@ jobs:
       - nifty_mid_150
       - nifty_small_250
     params:
-      trading_day: 50
+      trading_day: 100
       nse_endpoint: "<nse_base_url>/historical/<eq_segment>/<yyyy>/<mm_str>/cm<business_date_month>bhav.csv.zip"
       historical_data: "<base_dir>/<data_and_reports>/<historical_data>/equity"
       reports: "<base_dir>/<data_and_reports>/<reports_dir>/equity"
-      with_ema: False
+      with_ema: True
       ema:
         - 9
         - 21
+        - 50
   fno:
     tasks:
       - futures
@@ -68,14 +69,15 @@ jobs:
       - download_bhavcopy
       - nifty_index
     params:
-      trading_day: 50
+      trading_day: 100
       nse_endpoint: "<nse_base_url>/<indices_segment>/ind_close_all_<business_date>.csv"
       historical_data: "<base_dir>/<data_and_reports>/<historical_data>/indices"
       reports: "<base_dir>/<data_and_reports>/<reports_dir>/indices"
-      with_ema: False
+      with_ema: True
       ema:
         - 9
         - 21 
+        - 50
   emas:
     tasks:
       - download_bhavcopy
@@ -85,6 +87,7 @@ jobs:
       - ema_100_200
       - ema_21_50_100_200
     params:
+      trading_day: 50
       nse_endpoint: "<nse_base_url>/historical/<eq_segment>/<yyyy>/<mm_str>/cm<business_date_month>bhav.csv.zip"
       historical_data: "<base_dir>/<data_and_reports>/<historical_data>/equity"
       reports: "<base_dir>/<data_and_reports>/<reports_dir>/equity"

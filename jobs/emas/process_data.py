@@ -76,7 +76,8 @@ class ProcessData:
         generate_pdf(self.reports_dir, self.report_name, self.graphs_dir)
 
     def process_data(self):
-        dates = get_n_trading_days(max(self.emas) + 10)
+        trading_days = max (self.params.trading_day, max(self.emas) + 10)
+        dates = get_n_trading_days(trading_days)
         historical_ndays_df = self.get_historical_ndays_df(dates)
         plot_ready_historical_data = self.make_data_plot_ready(historical_ndays_df)
         self.make_required_dirs()

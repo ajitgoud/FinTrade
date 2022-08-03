@@ -54,12 +54,7 @@ class ProcessData:
         return nifty_indices
 
     def generate_graph(self,plot_ready_historical_data):
-        emas = {
-            'DAYS': [9,21],
-            'WEEKS': [25,50],
-            #'MONTHS': [50,100],
-            #'LONGTERM': [100,200],
-        }
+        
         graph = GenerateDailyGraph(self.graphs_dir)
         for key, value in plot_ready_historical_data.items():
             index = pd.concat(value[::-1],ignore_index=True)
@@ -76,7 +71,10 @@ class ProcessData:
                     }
                 )
             index[["Open", "High","Low","Close"]] = index[["Open", "High","Low","Close"]].apply(pd.to_numeric)
-            graph.generate_graph(index, key)
+            if self.params.with_ema:
+                graph.generate_graph(index, key,emas=self.params.ema)
+            else:
+                graph.generate_graph(index, key)
 
     def make_required_dirs(self):
         create_dir(self.reports_dir)

@@ -39,7 +39,7 @@ class GenerateDailyGraph:
             addplots.append(e)
         if show_volume and vol_plot:
             addplots.append(vol_plot)
-        mpf.plot(stock,type='candle',style='yahoo',title=title, figscale=1.5,addplot=addplots, volume=True, figratio=(16,9), savefig=graph_file)
+        mpf.plot(stock,type='candle',style='yahoo',title=title, figscale=1.5,addplot=addplots, volume=show_volume, figratio=(16,9), savefig=graph_file)
 
 
     def invest(self,stock, title):
@@ -69,4 +69,3 @@ class GenerateDailyGraph:
     def plot_daily_chart_without_vol(self,stock, title):
         graph_file = os.path.join(self.chart_save_dir,title)
         mpf.plot(stock,type='candle',style='yahoo',title=title, figscale=1.5,figratio=(16,9), savefig=graph_file)
-        

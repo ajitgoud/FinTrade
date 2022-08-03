@@ -10,9 +10,4 @@ class Compute:
         job_list = config.job_list
         common = config.common
         for job in job_list:
-            if 'ema' in job:
-                eval(job.capitalize())().start(params=eval(f'config.jobs.{job}'), common=common)
-            if 'ind' in job:
-                eval(job.capitalize())().start(params=eval(f'config.jobs.{job}'), common=common)
-            elif 'eq' in job:
-                eval(job.capitalize())().start(params=eval(f'config.jobs.{job}'), common=common)
+            eval(job.capitalize())().start(params=eval(f'config.jobs.{job}'), common=common)

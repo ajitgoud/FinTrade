@@ -27,6 +27,7 @@ class Emas:
         df = pd.read_csv(input_file)
         df = df.loc[(df['Series'] == 'EQ')]
         report_name = f"{task}_report-{common.business_date}.pdf"
+        print(f'Reportname: {report_name}')
         pattern = re.compile(r"[\d]+")
         emas = re.findall(pattern,task)
         emas = list(map(int, emas))
