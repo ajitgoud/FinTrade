@@ -92,6 +92,37 @@ def mean(data, n = None):
         mean = sum(data) / n
     return round(mean,2)
 
+def get_n_trading_weeks(days=None):
+    now = datetime.now()
+    day = now.date()
+    holidays = get_holidays()    
+    month = day.strftime("%b").upper()
+    if now.hour < 18:
+        day = day - timedelta(1)
+    count = days if days else 20
+    weeks=[]
+    dates = []
+    while count > 0:
+        if day.weekday() in [5,6]:
+            day = day - timedelta(1)
+        # elif day.day in holidays.get(str(day.year)).get(month):
+        #     if day.weekday() == 0:
+        #         weeks.append(dates)
+        #         dates=[]
+        #     day = day - timedelta(1)
+        #     count -=1
+            
+        else:
+            if not day.day in holidays.get(str(day.year)).get(month):
+                dates.append(day)
+            if day.weekday() == 0:
+                weeks.append(dates)
+                dates=[]
+            day = day - timedelta(1)
+            count-=1
+        month = day.strftime("%b").upper()
+    return weeks
+
 def variance(data):
     n = len(data)
     m = mean(data)

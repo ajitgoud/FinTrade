@@ -2,6 +2,7 @@ from jobs.equity import Equity
 from jobs.indices import Indices
 from jobs.pnl import Pnl
 from jobs.emas import Emas
+from jobs.weekly_performance import Weekly_performance
 class Compute:
     def __init__(self, **kwargs):
         pass
