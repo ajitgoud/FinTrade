@@ -39,9 +39,7 @@ def create_dir(dir_path, subs=None):
 
 def check_if_file_exists(dir_path):
     is_exist = os.path.exists(dir_path)
-    if is_exist:
-        print(f'{dir_path} exist.')
-    else:
+    if not is_exist:
         print(f'{dir_path} does not exist.')
     return is_exist
 
@@ -104,14 +102,7 @@ def get_n_trading_weeks(days=None):
     dates = []
     while count > 0:
         if day.weekday() in [5,6]:
-            day = day - timedelta(1)
-        # elif day.day in holidays.get(str(day.year)).get(month):
-        #     if day.weekday() == 0:
-        #         weeks.append(dates)
-        #         dates=[]
-        #     day = day - timedelta(1)
-        #     count -=1
-            
+            day = day - timedelta(1)            
         else:
             if not day.day in holidays.get(str(day.year)).get(month):
                 dates.append(day)
@@ -201,6 +192,7 @@ def load_yaml(yaml_file, **kwargs):
         config['common']['mm'] = today.strftime("%m")
         config['common']['mm_str'] = today.strftime("%b").upper()
         config['common']['yyyy'] = str(today.year)
+        config['common']['weekday'] = str(today.weekday())
         if kwargs.get('base_dir'):
             config['common']['base_dir'] = kwargs.get('base_dir')
         config = update_config(config)

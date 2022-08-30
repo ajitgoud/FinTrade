@@ -15,8 +15,10 @@ class DownloadData:
         common = kwargs.get('common')
         self.segment = kwargs.get('segment')
         self.bhavcopy_dir = kwargs.get('bhavcopy_dir')
-
-        self.download_url = params.nse_endpoint
+        if kwargs.get('download_url'):
+            self.download_url = kwargs.get('download_url')
+        else:
+            self.download_url = params.nse_endpoint
         self.year = common.yyyy
         self.month_int = common.mm
         self.month = common.mm_str
@@ -34,17 +36,14 @@ class DownloadData:
         if 'ind' in self.segment:
             pattern = re.compile(r'[\d]{8}.csv')
             self.download_url = re.sub(pattern, f'{self.day}{self.month_int}{self.year}.csv',self.download_url)
-            print(self.download_url)
         elif 'eq' in self.segment.lower():
             pattern = re.compile(r'[\d]{4}/[\w]{3}/[\w]+')
             sub_str = f'{self.year}/{self.month}/cm{self.day}{self.month}{self.year}bhav'
             self.download_url = re.sub(pattern, sub_str,self.download_url)
-            print(self.download_url)
         elif 'de' in self.segment.lower():
             pattern = re.compile(r'[\d]{4}/[\w]{3}/[\w]+')
             sub_str = f'{self.year}/{self.month}/fo{self.day}{self.month}{self.year}bhav'
             self.download_url = re.sub(pattern, sub_str,self.download_url)
-            print(self.download_url)
 
     def prepare_urls(self):
         self.downloaded_bhavcopy = os.path.join(self.bhavcopy_dir,self.download_url.split('/')[-1])

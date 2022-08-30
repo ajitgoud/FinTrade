@@ -32,8 +32,9 @@ class ProcessEquityData:
                     download_bhavcopy = DownloadData(
                             params=self.params, 
                             common=self.common, 
+                            download_url = self.params.nse_eq_endpoint, 
                             segment=self.common.eq_segment, 
-                            bhavcopy_dir=self.params.historical_data,
+                            bhavcopy_dir=self.bhavcopy_dir,
                             date=dt
                         )
                     download_bhavcopy.update_endpoint()
@@ -52,24 +53,29 @@ class ProcessEquityData:
             for day in historical_ndays_df:
                 dfs = len(day)
                 day_n = day[dfs-1].loc[day[dfs-1]['SYMBOL'] == symbol]
-                index_n = day_n.index.values.astype(int)[0]
+                if not day_n.empty:
+                    index_n = day_n.index.values.astype(int)[0]
+                    week_date = day_n.loc[index_n,'TIMESTAMP']
+                    O = day_n.loc[index_n,'OPEN']
                 day_0 = day[0].loc[day[0]['SYMBOL'] == symbol]
-                index_0 = day_0.index.values.astype(int)[0]
-                week_date = day_n.loc[index_n,'TIMESTAMP']
-                O= day_n.loc[index_n,'OPEN']
-                C= day_0.loc[index_0,'CLOSE']
+                if not day_0.empty:
+                    index_0 = day_0.index.values.astype(int)[0]
+                    C = day_0.loc[index_0,'CLOSE']
                 high = []
                 low = []
                 for d in day:
                     d = d.loc[d['SYMBOL'] == symbol]
-                    index = d.index.values.astype(int)[0]
-                    high.append(d.loc[index,'HIGH'])
-                    low.append(d.loc[index,'LOW'])
-
-                H = max(high)
-                L = min(low)
-                data = [week_date, O, H, L, C]
-                weekly_data.append(data)
+                    if not d.empty:
+                        index = d.index.values.astype(int)[0]
+                        high.append(d.loc[index,'HIGH'])
+                        low.append(d.loc[index,'LOW'])
+                if len(high) > 0:
+                    H = max(high)
+                if len(low) > 0:
+                    L = min(low)
+                if H and L:
+                    data = [week_date, O, H, L, C]
+                    weekly_data.append(data)
             weekly_data = weekly_data[::-1]
             df = pd.DataFrame(weekly_data,columns =['Date', 'Open', 'High', 'Low', 'Close'])
             nifty[symbol] = df
@@ -86,6 +92,7 @@ class ProcessEquityData:
             index[["Open", "High","Low","Close"]] = index[["Open", "High","Low","Close"]].apply(pd.to_numeric)
             # with pd.option_context('display.max_rows', None, 'display.max_columns', None):  # more options can be specified also
             #     print(index.index)
+            print(key)
             if self.params.with_ema:
                 graph.generate_graph(index, key,emas=self.params.ema)
             else:
@@ -103,9 +110,11 @@ class ProcessEquityData:
         generate_pdf(self.reports_dir, self.report_name, self.graphs_dir)
 
     def process_data(self):
-        weeks = get_n_trading_weeks(self.params.trading_day * 5)
+        trading_day = (self.params.trading_day - 1) * 5 + int(self.common.weekday) + 1
+        weeks = get_n_trading_weeks(trading_day)
         historical_ndays_df = self.get_historical_ndays_df(weeks)
         plot_ready_historical_data = self.make_data_plot_ready(historical_ndays_df)
         self.make_required_dirs()
         self.generate_graph(plot_ready_historical_data)
         self.generate_pdf()
+        self.clean_post_report()

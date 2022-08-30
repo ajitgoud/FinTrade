@@ -4,6 +4,7 @@ common:
   mm_str: ""
   yyyy: ""
   base_dir: ""
+  weekday: ""
   business_date: "<dd><mm><yyyy>"
   business_date_month: "<dd><mm_str><yyyy>"
   eq_segment: "EQUITIES"
@@ -18,15 +19,15 @@ common:
   graphs_dir: "<base_dir>/<data_and_reports>/Graphs"
 
 job_list:
-  #- equity
+  - equity
   #- fno
-  #- indices
+  - indices
   #- emas
   #- bell_curve
   #- correlation_pairs
-  - weekly_performance
+  #- weekly_performance
   #- monthly_performance
-  #- pnl
+  - pnl
 
 jobs:
   equity:
@@ -103,10 +104,11 @@ jobs:
   weekly_performance:
     tasks:
       - download_bhavcopy
-      - nifty_50
-      #- nifty_next_50
-      #- nifty_mid_150
-      #- nifty_small_250
+      #- nifty_50
+      - nifty_next_50
+      - nifty_mid_150
+      - nifty_small_250
+      - nifty_index
     params:
       trading_day: 40
       nse_eq_endpoint: "<nse_base_url>/historical/<eq_segment>/<yyyy>/<mm_str>/cm<business_date_month>bhav.csv.zip"
