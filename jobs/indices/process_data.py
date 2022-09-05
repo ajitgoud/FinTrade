@@ -22,9 +22,8 @@ class ProcessData:
         self.graphs_dir = kwargs.get('graphs_dir')
 
     def get_historical_ndays_df(self, dates):
-        historical_ndays_ls = []
+        historical_ndays = []
         for dts in dates:
-            historical_ndays = []
             for dt in dts:
                 d, m, y = dt.strftime("%d"),dt.strftime("%m"),dt.year
                 bhavcopy = os.path.join(self.bhavcopy_dir, f"{y}{m}{d}.csv")
@@ -42,49 +41,36 @@ class ProcessData:
                 bhavcopy_df = pd.read_csv(bhavcopy)
                 bhavcopy_df["Index Date"] = bhavcopy_df["Index Date"].apply(lambda x: dt)
                 historical_ndays.append(bhavcopy_df)
-            historical_ndays_ls.append(historical_ndays)
-        return historical_ndays_ls
+        return historical_ndays
 
     def make_data_plot_ready(self, historical_ndays_df):
         nifty_indices = {}
-        for index in ["Nifty 50"]: #self.indices:
+        for index in self.indices:
             ind = []
-            weekly_data = []
             for day in historical_ndays_df:
-                dfs = len(day)
-                day_n = day[dfs-1].loc[day[dfs-1]['Index Name'].str.lower() == index.lower()]
-                day_0 = day[0].loc[day[0]['Index Name'].str.lower() == index.lower()]
-                week_date = day_n.loc[0,'Index Date']
-                O= day_n.loc[0,'Open Index Value']
-                C= day_0.loc[0,'Closing Index Value']
-                high = []
-                low = []
-                for d in day:
-                    d = d.loc[d['Index Name'].str.lower() == index.lower()]
-                    high.append(d.loc[0,'High Index Value'])
-                    low.append(d.loc[0,'Low Index Value'])
-
-                H = max(high)
-                L = min(low)
-                data = [week_date, O, H, L, C]
-                weekly_data.append(data)
-            #     day = day.loc[day['Index Name'].str.lower() == index.lower()]
-            #     day = day[['Open Index Value', 'High Index Value','Low Index Value','Closing Index Value','Index Date']]
-            #     ind.append(day)
-            weekly_data = weekly_data[::-1]
-            print(*weekly_data)
-            df = pd.DataFrame(weekly_data,columns =['Date', 'Open', 'High', 'Low', 'Close'])
-            nifty_indices[index] = df
+                day = day.loc[day['Index Name'].str.lower() == index.lower()]
+                day = day[['Open Index Value', 'High Index Value','Low Index Value','Closing Index Value','Index Date']]
+                ind.append(day)
+            nifty_indices[index] = ind
         return nifty_indices
 
     def generate_graph(self,plot_ready_historical_data):
         
         graph = GenerateDailyGraph(self.graphs_dir)
-        for key, index in plot_ready_historical_data.items():
+        for key, value in plot_ready_historical_data.items():
+            index = pd.concat(value[::-1],ignore_index=True)
             index.reset_index()
-            index['Date'] = pd.DatetimeIndex(index['Date'])
-            index = index.set_index('Date')
+            index['Index Date'] = pd.DatetimeIndex(index['Index Date'])
+            index = index.set_index('Index Date')
             index.index.name = 'Date'
+            index = index.rename(
+                columns={
+                    'Open Index Value': 'Open',
+                    'High Index Value': 'High',
+                    'Low Index Value': 'Low',
+                    'Closing Index Value': 'Close',
+                    }
+                )
             index[["Open", "High","Low","Close"]] = index[["Open", "High","Low","Close"]].apply(pd.to_numeric)
             with pd.option_context('display.max_rows', None, 'display.max_columns', None):  # more options can be specified also
                 print(index.index)
