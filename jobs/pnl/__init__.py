@@ -1,27 +1,38 @@
-from traceback import print_last
+import os
 import pandas as pd
-
-class PnL:
+from jobs.pnl.process_data import ProcessData
+from utils import *
+class Pnl:
     def __init__(self):
         self.cols = ['Symbol', 'Instrument', 'Entry date', 'Exit date', 'Weekday',
-       'Entry price', 'Exit price', 'Long/Short', 'Position size', 'Stop loss',
-       'Profit/Loss', 'Brokerage', 'Days held', 'Set up used',
-       'Why this trade?', 'Learnings']
+        'Entry price', 'Exit price', 'Long/Short', 'Position size', 'Stop loss',
+        'Profit/Loss', 'Brokerage', 'Days held', 'Set up used',
+        'Why this trade?', 'Learnings']
+        self.today = get_working_day().strftime("%Y%m%d")
 
-    def read_pnl(self):
-        filename = 'D:\_Learnings\Career\Share market\FinTrade\PnL\Tradebook.xlsx'
-        xls = pd.ExcelFile(filename)
-        df1 = pd.read_excel(xls, 'JUN-22', usecols=self.cols)
-        # df2 = pd.read_excel(xls, 'JUL-22', usecols=self.cols)
-        # df1 = df1.dropna()
-        print(df1['Exit date'])
-        d = df1.groupby(['Exit date'])
-        print(d)
-        # df2 = df2.dropna()
-        # print(df2)
-        for key, item in d:
-            print(round(item['Profit/Loss'].sum() + item['Brokerage'].sum()))
+    def initialize_task(self, task, params,common):
+        # tradebook = os.path.join(params.historical_data, f'Tradebook.xlsx')
+        # res = len(tradebook.sheet_names)
+        # print(res)
+        report_name = f"PnL_report-{self.today}.pdf"
+        ProcessData(
+            params=params,
+            common=common,
+            report_name=report_name, 
+            tradebook_dir = params.historical_data,
+            reports_dir = params.reports,
+            graphs_dir = common.graphs_dir
+        ).process_data()
+
+    def start(self, **kwargs):
+        params = kwargs.get('params')
+        common = kwargs.get('common')
+
+        for task in params.tasks:
+            print(f'{task} task started')
+            self.initialize_task(task, params.params,common)
+            print(f'{task} task completed')
 
 if __name__ == '__main__':
-    pnl = PnL()
+    pnl = Pnl()
     pnl.read_pnl()

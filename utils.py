@@ -39,9 +39,7 @@ def create_dir(dir_path, subs=None):
 
 def check_if_file_exists(dir_path):
     is_exist = os.path.exists(dir_path)
-    if is_exist:
-        print(f'{dir_path} exist.')
-    else:
+    if not is_exist:
         print(f'{dir_path} does not exist.')
     return is_exist
 
@@ -92,6 +90,30 @@ def mean(data, n = None):
         mean = sum(data) / n
     return round(mean,2)
 
+def get_n_trading_weeks(days=None):
+    now = datetime.now()
+    day = now.date()
+    holidays = get_holidays()    
+    month = day.strftime("%b").upper()
+    if now.hour < 18:
+        day = day - timedelta(1)
+    count = days if days else 20
+    weeks=[]
+    dates = []
+    while count > 0:
+        if day.weekday() in [5,6]:
+            day = day - timedelta(1)            
+        else:
+            if not day.day in holidays.get(str(day.year)).get(month):
+                dates.append(day)
+            if day.weekday() == 0:
+                weeks.append(dates)
+                dates=[]
+            day = day - timedelta(1)
+            count-=1
+        month = day.strftime("%b").upper()
+    return weeks
+
 def variance(data):
     n = len(data)
     m = mean(data)
@@ -106,7 +128,7 @@ def stdev(data):
     return round(std_dev,2)
 
 def replace(res, common):
-    if '/' in res:
+    if '/' in res and not 'url' in res:
         res = res.split('/')
         res = os.path.join(*res)
     pattern = re.compile(r'(<([\w]+)>)')
@@ -151,6 +173,7 @@ def update_config(config):
                 elif isinstance(v, list):
                     pass
                 else:
+                    print(v)
                     res = re.search(pattern, v)
                     if res:
                         config[key][k] = replace(v, config['common'])
@@ -164,6 +187,12 @@ def update_config(config):
 def load_yaml(yaml_file, **kwargs):
     with open(yaml_file, 'r') as file:
         config = yaml.safe_load(file)
+        today = get_working_day()
+        config['common']['dd'] = today.strftime("%d")
+        config['common']['mm'] = today.strftime("%m")
+        config['common']['mm_str'] = today.strftime("%b").upper()
+        config['common']['yyyy'] = str(today.year)
+        config['common']['weekday'] = str(today.weekday())
         if kwargs.get('base_dir'):
             config['common']['base_dir'] = kwargs.get('base_dir')
         config = update_config(config)

@@ -21,6 +21,7 @@ class ProcessData:
         self.reports_dir = kwargs.get('reports_dir')
         self.reports_dir = os.path.join(self.reports_dir, self.common.business_date)
         self.graphs_dir = kwargs.get('graphs_dir')
+        self.emas = kwargs.get('emas')
 
     def get_historical_ndays_df(self, dates):
         historical_ndays = []
@@ -55,7 +56,6 @@ class ProcessData:
     def generate_graph(self,plot_ready_historical_data):
         graph = GenerateDailyGraph(self.graphs_dir)
         for key, value in plot_ready_historical_data.items():
-            
             stock = pd.concat(value[::-1],ignore_index=True)
             stock.reset_index()
             stock.TIMESTAMP = pd.DatetimeIndex(stock['TIMESTAMP'])
@@ -63,10 +63,7 @@ class ProcessData:
             stock.index.name = 'Date'
             stock = stock.rename(columns={'TOTTRDQTY': 'Volume'})
             stock = stock.rename(columns=lambda x: x.capitalize())
-            if self.params.with_ema:
-                graph.generate_graph(stock, key,show_volume=True,emas= self.params.ema)
-            else:
-                graph.generate_graph(stock, key,show_volume=True)
+            graph.generate_graph(stock, key, show_volume=True, emas=self.emas)
 
     def make_required_dirs(self):
         create_dir(self.reports_dir)
@@ -79,7 +76,8 @@ class ProcessData:
         generate_pdf(self.reports_dir, self.report_name, self.graphs_dir)
 
     def process_data(self):
-        dates = get_n_trading_days(self.params.trading_day)
+        trading_days = max (self.params.trading_day, max(self.emas) + 10)
+        dates = get_n_trading_days(trading_days)
         historical_ndays_df = self.get_historical_ndays_df(dates)
         plot_ready_historical_data = self.make_data_plot_ready(historical_ndays_df)
         self.make_required_dirs()

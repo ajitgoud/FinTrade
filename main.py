@@ -3,7 +3,7 @@ from utils import load_yaml
 from jobs import Compute
 class FinTrade:
     def __init__(self):
-       pass 
+        pass 
         
     def start(self):
         current_dir = os.path.dirname(os.path.realpath(__file__))
