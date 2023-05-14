@@ -35,7 +35,7 @@ class Weekly_performance:
     def initialize_eq_task(self, task, params,common):
         input_file =  os.path.join(common.nifty_companies_dir, f"{task}.csv")
         df = pd.read_csv(input_file)
-        df = df.loc[(df['Series'] == 'EQ')]
+        #df = df.loc[(df['Series'] == 'EQ')]
         report_name = f"{task}_weekly-report.pdf"
         ProcessEquityData(
             params=params,

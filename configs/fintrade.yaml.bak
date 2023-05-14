@@ -22,10 +22,10 @@ job_list:
   - equity
   #- fno
   - indices
-  #- emas
+  - emas
   #- bell_curve
   #- correlation_pairs
-  #- weekly_performance
+  - weekly_performance
   #- monthly_performance
   #- pnl
 
@@ -56,7 +56,7 @@ jobs:
       nse_endpoint: "<nse_base_url>/historical/<eq_segment>/<yyyy>/<mm_str>/cm<business_date_month>bhav.csv.zip"
       historical_data: "<base_dir>/<data_and_reports>/<historical_data>/equity"
       reports: "<base_dir>/<data_and_reports>/<reports_dir>/equity"
-      with_ema: False
+      with_ema: True
       ema:
         - 9
         - 21

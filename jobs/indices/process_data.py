@@ -4,7 +4,7 @@ from matplotlib.cbook import report_memory
 import pandas as pd
 import mplfinance as mpf
 from datetime import datetime, date, timedelta
-from utils import get_n_trading_weeks, create_dir,remove_files, get_working_day, check_if_file_exists
+from utils import get_n_trading_days, create_dir,remove_files, check_if_file_exists
 from jobs.generate_graph import GenerateDailyGraph
 from jobs.generate_pdf import generate_pdf
 from jobs.download_historical_data import DownloadData
@@ -23,24 +23,23 @@ class ProcessData:
 
     def get_historical_ndays_df(self, dates):
         historical_ndays = []
-        for dts in dates:
-            for dt in dts:
-                d, m, y = dt.strftime("%d"),dt.strftime("%m"),dt.year
-                bhavcopy = os.path.join(self.bhavcopy_dir, f"{y}{m}{d}.csv")
-                if not check_if_file_exists(bhavcopy):
-                    download_bhavcopy = DownloadData(
-                            params=self.params, 
-                            common=self.common, 
-                            segment=self.common.indices_segment, 
-                            bhavcopy_dir=self.params.historical_data,
-                            date=dt
-                        )
-                    download_bhavcopy.update_endpoint()
-                    download_bhavcopy.start_downloading()
+        for dt in dates:
+            d, m, y = dt.strftime("%d"),dt.strftime("%m"),dt.year
+            bhavcopy = os.path.join(self.bhavcopy_dir, f"{y}{m}{d}.csv")
+            if not check_if_file_exists(bhavcopy):
+                download_bhavcopy = DownloadData(
+                        params=self.params, 
+                        common=self.common, 
+                        segment=self.common.indices_segment, 
+                        bhavcopy_dir=self.params.historical_data,
+                        date=dt
+                    )
+                download_bhavcopy.update_endpoint()
+                download_bhavcopy.start_downloading()
 
-                bhavcopy_df = pd.read_csv(bhavcopy)
-                bhavcopy_df["Index Date"] = bhavcopy_df["Index Date"].apply(lambda x: dt)
-                historical_ndays.append(bhavcopy_df)
+            bhavcopy_df = pd.read_csv(bhavcopy)
+            bhavcopy_df["Index Date"] = bhavcopy_df["Index Date"].apply(lambda x: dt)
+            historical_ndays.append(bhavcopy_df)
         return historical_ndays
 
     def make_data_plot_ready(self, historical_ndays_df):
@@ -72,8 +71,8 @@ class ProcessData:
                     }
                 )
             index[["Open", "High","Low","Close"]] = index[["Open", "High","Low","Close"]].apply(pd.to_numeric)
-            with pd.option_context('display.max_rows', None, 'display.max_columns', None):  # more options can be specified also
-                print(index.index)
+            # with pd.option_context('display.max_rows', None, 'display.max_columns', None):  # more options can be specified also
+            #     print(index.index)
             if self.params.with_ema:
                 graph.generate_graph(index, key,emas=self.params.ema)
             else:
@@ -91,10 +90,8 @@ class ProcessData:
         generate_pdf(self.reports_dir, self.report_name, self.graphs_dir)
 
     def process_data(self):        
-        # dates = get_n_trading_days(self.params.trading_day)
-        # print(len(dates))
-        weeks = get_n_trading_weeks(self.params.trading_day)
-        historical_ndays_df = self.get_historical_ndays_df(weeks)
+        dates = get_n_trading_days(self.params.trading_day)
+        historical_ndays_df = self.get_historical_ndays_df(dates)
         plot_ready_historical_data = self.make_data_plot_ready(historical_ndays_df)
         self.make_required_dirs()
         self.generate_graph(plot_ready_historical_data)
