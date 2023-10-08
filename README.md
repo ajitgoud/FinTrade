@@ -30,4 +30,4 @@ Fintrade is an automation tool designed to simplify financial data analysis by c
 
 ## Feedback
 
-Feel free to [submit issues](https://github.com/yourusername/fintrade/issues) or [create pull requests](https://github.com/yourusername/fintrade/pulls) to improve this project.
+Feel free to [submit issues](https://github.com/ajitgoud/fintrade/issues) or [create pull requests](https://github.com/ajitgoud/fintrade/pulls) to improve this project.
