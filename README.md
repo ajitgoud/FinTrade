@@ -1,7 +1,3 @@
-Sure, here's a sample README file for your Fintrade project on GitHub:
-
----
-
 # Fintrade
 
 ## Description
