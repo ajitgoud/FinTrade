@@ -27,17 +27,7 @@ Fintrade is an automation tool designed to simplify financial data analysis by c
 
 - Edit `config.py` to customize settings such as data sources and report formatting.
 
-## License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
 
 ## Feedback
 
 Feel free to [submit issues](https://github.com/yourusername/fintrade/issues) or [create pull requests](https://github.com/yourusername/fintrade/pulls) to improve this project.
-
----
-
-Brief Description (50-100 words):
-
-**Fintrade** is a Python-based automation tool that simplifies financial data analysis. It connects to the National Stock Exchange (NSE), retrieves real-time data, and generates daily stock and indices chart reports in PDF format. Using Pandas and web scraping techniques, Fintrade performs backend computations to provide valuable insights into the financial markets. Customize settings in the `config.py` file to tailor the tool to your needs. Start simplifying your financial analysis with Fintrade today!
